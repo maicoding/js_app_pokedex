@@ -4,7 +4,9 @@ let pokemonRepository = (function() {
 
   // Search function for Navbar
   let search = document.getElementById('poke-search');
-  search.addEventListener('input', searchList);
+  if (search) {
+    search.addEventListener('input', searchList);
+  }
 
   function searchList() {
     let searchInput = document.getElementById('poke-search').value;
@@ -13,7 +15,7 @@ let pokemonRepository = (function() {
     let listItem = $('li');
     listItem.each(function() {
       let item = $(this);
-      let name = item.text();
+      let name = item.text().toLowerCase();
       if (name.includes(searchInput)) {
         item.show();
       } else {
@@ -86,11 +88,11 @@ let pokemonRepository = (function() {
   function loadDetails(item) {
     let url = item.detailsUrl;
     return fetch(url)
-      .then(function(repsonse) {
-        return repsonse.json();
+      .then(function(response) {
+        return response.json();
       })
       .then(function(details) {
-        item.imageUrl = details.sprites.other['official-artwork'].front_default;
+        item.imageUrl = details.sprites.other['official-artwork'].front_default || details.sprites.front_default;
         item.id = details.id;
 
         item.feet = Math.floor(details.height * 0.32808); // dm to ft
@@ -124,7 +126,9 @@ let pokemonRepository = (function() {
     pokemonId.innerText = '#' + pokemon.id.toString().padStart(3, 0);
 
     let pokemonSprite = document.createElement('img');
-    pokemonSprite.src = pokemon.imageUrl;
+    if (pokemon.imageUrl) {
+      pokemonSprite.src = pokemon.imageUrl;
+    }
     pokemonSprite.alt = "image of selected pokemon";
     pokemonSprite.classList.add('pokemon-sprite');
 
